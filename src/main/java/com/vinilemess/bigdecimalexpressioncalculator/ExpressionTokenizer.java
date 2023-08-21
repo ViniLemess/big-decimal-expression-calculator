@@ -1,5 +1,7 @@
 package com.vinilemess.bigdecimalexpressioncalculator;
 
+import com.vinilemess.bigdecimalexpressioncalculator.Token.Operator;
+
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -7,29 +9,31 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.vinilemess.bigdecimalexpressioncalculator.Token.Operator.ALLOWED_OPERATORS;
-import static com.vinilemess.bigdecimalexpressioncalculator.Token.Operator.fromString;
 
 class ExpressionTokenizer {
     private static final String OPERAND_OPERATOR_REGEX = "(-?\\d+|\\+|\\-|\\*|\\/)";
     private static final Pattern OPERAND_OPERATOR_PATTERN = Pattern.compile(OPERAND_OPERATOR_REGEX);
     public static Deque<Token> tokenizeExpression(String stringExpression) {
-        Deque<Token> tokens = new ArrayDeque<>();
         Matcher matcher = OPERAND_OPERATOR_PATTERN.matcher(stringExpression);
 
+        Deque<Token> tokens = new ArrayDeque<>();
         while (matcher.find()) {
             String token = matcher.group();
-            classifyAndAddToken(token, tokens);
+            tokens = classifyAndAppendToken(token, tokens);
         }
         return tokens;
     }
 
-    private static void classifyAndAddToken(String token, Deque<Token> tokens) {
+    private static Deque<Token> classifyAndAppendToken(String token, Deque<Token> tokens) {
+        Deque<Token> newTokens = new ArrayDeque<>(tokens);
+
         if (!token.isEmpty()) {
             if (ALLOWED_OPERATORS.contains(token)) {
-                tokens.addLast(Token.operator(fromString(token.toUpperCase())));
+                newTokens.addLast(Token.operator(Operator.fromString(token.toUpperCase())));
             } else {
-                tokens.addLast(Token.number(new BigDecimal(token)));
+                newTokens.addLast(Token.number(new BigDecimal(token)));
             }
         }
+        return newTokens;
     }
 }
