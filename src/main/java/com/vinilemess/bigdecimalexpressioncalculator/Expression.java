@@ -13,66 +13,77 @@ import static com.vinilemess.bigdecimalexpressioncalculator.ExpressionTokenizer.
 class Expression {
     private final Deque<Token> tokens;
 
-    public Expression(String stringExpression) {
+    public Expression(final String stringExpression) {
         tokens = tokenizeExpression(stringExpression);
     }
 
     public BigDecimal evaluate() {
-        Deque<NumberToken> operands = new ArrayDeque<>();
-        Deque<OperatorToken> operators = new ArrayDeque<>();
-
-        processTokens(operands, operators);
-
-        finalizeCalculation(operands, operators);
-
-        return operands.pop().getValue();
+        return computeResultFromTokens(tokens, new ArrayDeque<>(), new ArrayDeque<>());
     }
 
-    private void processTokens(Deque<NumberToken> operands, Deque<OperatorToken> operators) {
-        while (hasTokens()) {
-            Token token = tokens.removeFirst();
-
-            if (token instanceof NumberToken numberToken) {
-                handleNumberToken(operands, numberToken);
-            } else if (token instanceof OperatorToken operatorToken) {
-                handleOperatorToken(operands, operators, operatorToken);
-            }
+    private BigDecimal computeResultFromTokens(final Deque<Token> remainingTokens,
+                                               Deque<NumberToken> operands,
+                                               Deque<OperatorToken> operators) {
+        if (remainingTokens.isEmpty()) {
+            return evaluateFinalResult(operands, operators);
         }
-    }
 
-    private boolean hasTokens() {
-        return !tokens.isEmpty();
-    }
+        final Token token = remainingTokens.removeFirst();
+        final Deque<Token> newRemainingTokens = new ArrayDeque<>(remainingTokens);
 
-    private void handleNumberToken(Deque<NumberToken> operandStack, NumberToken token) {
-        operandStack.push(token);
-    }
-
-    private void handleOperatorToken(Deque<NumberToken> operandStack, Deque<OperatorToken> operatorStack, OperatorToken token) {
-        while (shouldProcessCurrentOperators(operatorStack, token)) {
-            applyOperatorAndPushResult(operandStack, operatorStack);
+        if (token instanceof NumberToken numberToken) {
+            operands.push(numberToken);
+        } else if (token instanceof OperatorToken operatorToken) {
+            CalculationResult result = calculateOperation(operands, operators, operatorToken);
+            operands = result.operands();
+            operators = result.operators();
         }
-        operatorStack.push(token);
+
+        return computeResultFromTokens(newRemainingTokens, operands, operators);
     }
 
-    private static boolean shouldProcessCurrentOperators(Deque<OperatorToken> operatorStack, OperatorToken token) {
+    private CalculationResult calculateOperation(final Deque<NumberToken> operands,
+                                                 final Deque<OperatorToken> operators,
+                                                 final OperatorToken token) {
+        Deque<OperatorToken> newOperators = new ArrayDeque<>(operators);
+        Deque<NumberToken> newOperands = new ArrayDeque<>(operands);
+        while (shouldProcessCurrentOperators(newOperators, token)) {
+            final CalculationResult result = applyOperatorAndCalculateResult(newOperands, newOperators);
+            newOperators = result.operators();
+            newOperands = result.operands();
+        }
+        newOperators.push(token);
+        return new CalculationResult(newOperands, newOperators);
+    }
+
+    private static boolean shouldProcessCurrentOperators(final Deque<OperatorToken> operatorStack, final OperatorToken token) {
         return !operatorStack.isEmpty() && operatorStack.peek().getOperator().getPrecedencia() >= token.getOperator().getPrecedencia();
     }
 
-    private void finalizeCalculation(Deque<NumberToken> operandStack, Deque<OperatorToken> operatorStack) {
-        while (!operatorStack.isEmpty()) {
-            applyOperatorAndPushResult(operandStack, operatorStack);
+    private BigDecimal evaluateFinalResult(final Deque<NumberToken> operands, final Deque<OperatorToken> operators) {
+        if (operators.isEmpty()) {
+            return operands.pop().getValue();
         }
+        final CalculationResult result = applyOperatorAndCalculateResult(operands, operators);
+        return evaluateFinalResult(result.operands(), result.operators());
     }
 
-    private void applyOperatorAndPushResult(Deque<NumberToken> operandStack, Deque<OperatorToken> operatorStack) {
-        OperatorToken operatorToken = operatorStack.pop();
-        NumberToken rightOperand = operandStack.pop();
-        NumberToken leftOperand = operandStack.pop();
 
-        Operator operator = operatorToken.getOperator();
+    private CalculationResult applyOperatorAndCalculateResult(final Deque<NumberToken> operands, final Deque<OperatorToken> operators) {
+        final OperatorToken operatorToken = operators.pop();
+        final NumberToken rightOperand = operands.pop();
+        final NumberToken leftOperand = operands.pop();
 
-        BigDecimal result = operator.calculate(leftOperand.getValue(), rightOperand.getValue());
-        operandStack.push(NumberToken.number(result));
+        final Operator operator = operatorToken.getOperator();
+        final BigDecimal result = operator.calculate(leftOperand.getValue(), rightOperand.getValue());
+
+        final Deque<NumberToken> newOperands = new ArrayDeque<>(operands);
+        newOperands.push(NumberToken.number(result));
+        final Deque<OperatorToken> newOperators = new ArrayDeque<>(operators);
+
+        return new CalculationResult(newOperands, newOperators);
+    }
+
+    private record CalculationResult(Deque<NumberToken> operands, Deque<OperatorToken> operators) {
     }
 }
