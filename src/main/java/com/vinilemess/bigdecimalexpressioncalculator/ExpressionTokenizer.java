@@ -28,12 +28,16 @@ class ExpressionTokenizer {
         Deque<Token> newTokens = new ArrayDeque<>(tokens);
 
         if (!token.isEmpty()) {
-            if (ALLOWED_OPERATORS.contains(token)) {
+            if (isOperator(token)) {
                 newTokens.addLast(Token.operator(Operator.fromString(token.toUpperCase())));
             } else {
                 newTokens.addLast(Token.number(new BigDecimal(token)));
             }
         }
         return newTokens;
+    }
+
+    private static boolean isOperator(String token) {
+        return ALLOWED_OPERATORS.contains(token);
     }
 }
