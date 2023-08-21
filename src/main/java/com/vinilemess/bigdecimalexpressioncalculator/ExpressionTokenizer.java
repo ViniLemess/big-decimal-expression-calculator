@@ -13,19 +13,19 @@ import static com.vinilemess.bigdecimalexpressioncalculator.Token.Operator.ALLOW
 class ExpressionTokenizer {
     private static final String OPERAND_OPERATOR_REGEX = "(-?\\d+|\\+|\\-|\\*|\\/)";
     private static final Pattern OPERAND_OPERATOR_PATTERN = Pattern.compile(OPERAND_OPERATOR_REGEX);
-    public static Deque<Token> tokenizeExpression(String stringExpression) {
-        Matcher matcher = OPERAND_OPERATOR_PATTERN.matcher(stringExpression);
+    public static Deque<Token> tokenizeExpression(final String stringExpression) {
+        final Matcher matcher = OPERAND_OPERATOR_PATTERN.matcher(stringExpression);
 
         Deque<Token> tokens = new ArrayDeque<>();
         while (matcher.find()) {
-            String token = matcher.group();
+            final String token = matcher.group();
             tokens = classifyAndAppendToken(token, tokens);
         }
         return tokens;
     }
 
-    private static Deque<Token> classifyAndAppendToken(String token, Deque<Token> tokens) {
-        Deque<Token> newTokens = new ArrayDeque<>(tokens);
+    private static Deque<Token> classifyAndAppendToken(final String token, final Deque<Token> tokens) {
+        final Deque<Token> newTokens = new ArrayDeque<>(tokens);
 
         if (!token.isEmpty()) {
             if (isOperator(token)) {
@@ -37,7 +37,7 @@ class ExpressionTokenizer {
         return newTokens;
     }
 
-    private static boolean isOperator(String token) {
+    private static boolean isOperator(final String token) {
         return ALLOWED_OPERATORS.contains(token);
     }
 }
