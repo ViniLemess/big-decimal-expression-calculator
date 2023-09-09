@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 
 public class ExpressionCalculator {
 
-    public static ExpressionBuilder value(BigDecimal value) {
+    private ExpressionCalculator() {
+    }
+
+    public static ExpressionBuilder value(final BigDecimal value) {
         return ExpressionBuilder.initiateExpression(value);
     }
 
@@ -12,30 +15,30 @@ public class ExpressionCalculator {
 
         private String expression;
 
-        private ExpressionBuilder(String expression) {
+        private ExpressionBuilder(final String expression) {
             this.expression = expression;
         }
 
-        public static ExpressionBuilder initiateExpression(BigDecimal value) {
+        public static ExpressionBuilder initiateExpression(final BigDecimal value) {
             return new ExpressionBuilder(value.toString());
         }
 
-        public ExpressionBuilder plus(BigDecimal value) {
+        public ExpressionBuilder plus(final BigDecimal value) {
             expression = String.format("%s + %s", expression, value.toString());
             return this;
         }
 
-        public ExpressionBuilder minus(BigDecimal value) {
+        public ExpressionBuilder minus(final BigDecimal value) {
             expression = String.format("%s - %s", expression, value.toString());
             return this;
         }
 
-        public ExpressionBuilder times(BigDecimal value) {
+        public ExpressionBuilder times(final BigDecimal value) {
             expression = String.format("%s * %s", expression, value.toString());
             return this;
         }
 
-        public ExpressionBuilder dividedBy(BigDecimal value) {
+        public ExpressionBuilder dividedBy(final BigDecimal value) {
             expression = String.format("%s / %s", expression, value.toString());
             return this;
         }
