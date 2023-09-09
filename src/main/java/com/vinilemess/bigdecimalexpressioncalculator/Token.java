@@ -66,16 +66,16 @@ class Token {
             }
         };
 
-        private final int precedencia;
+        private final int precedence;
 
         public static final String ALLOWED_OPERATORS = "+-*/";
 
-        Operator(int precedencia) {
-            this.precedencia = precedencia;
+        Operator(int precedence) {
+            this.precedence = precedence;
         }
 
-        public int getPrecedencia() {
-            return precedencia;
+        public int getPrecedence() {
+            return precedence;
         }
 
         public static Operator fromString(String token) {

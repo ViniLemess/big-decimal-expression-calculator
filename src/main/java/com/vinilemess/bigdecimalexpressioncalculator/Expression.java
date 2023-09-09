@@ -57,7 +57,7 @@ class Expression {
     }
 
     private static boolean shouldProcessCurrentOperators(final Deque<OperatorToken> operatorStack, final OperatorToken token) {
-        return !operatorStack.isEmpty() && operatorStack.peek().getOperator().getPrecedencia() >= token.getOperator().getPrecedencia();
+        return !operatorStack.isEmpty() && operatorStack.peek().getOperator().getPrecedence() >= token.getOperator().getPrecedence();
     }
 
     private BigDecimal evaluateFinalResult(final Deque<NumberToken> operands, final Deque<OperatorToken> operators) {
