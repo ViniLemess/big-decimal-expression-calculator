@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import static com.vinilemess.bigdecimalexpressioncalculator.Token.Operator.ALLOWED_OPERATORS;
 
 class ExpressionTokenizer {
-    private static final String OPERAND_OPERATOR_REGEX = "(-?\\d+|\\+|\\-|\\*|\\/)";
+    private static final String OPERAND_OPERATOR_REGEX = "(-?\\d+(\\.\\d+)?|\\+|-|\\*|/)";
     private static final Pattern OPERAND_OPERATOR_PATTERN = Pattern.compile(OPERAND_OPERATOR_REGEX);
     public static Deque<Token> tokenizeExpression(final String stringExpression) {
         final Matcher matcher = OPERAND_OPERATOR_PATTERN.matcher(stringExpression);

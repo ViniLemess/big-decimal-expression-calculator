@@ -34,12 +34,16 @@ class Expression {
         if (token instanceof NumberToken numberToken) {
             operands.push(numberToken);
         } else if (token instanceof OperatorToken operatorToken) {
-            CalculationResult result = calculateOperation(operands, operators, operatorToken);
+            final CalculationResult result = calculateOperation(operands, operators, operatorToken);
             operands = result.operands();
             operators = result.operators();
         }
 
-        return computeResultFromTokens(newRemainingTokens, operands, operators);
+        return removeTrailingZeros(computeResultFromTokens(newRemainingTokens, operands, operators));
+    }
+
+    private BigDecimal removeTrailingZeros(final BigDecimal value) {
+        return value.stripTrailingZeros();
     }
 
     private CalculationResult calculateOperation(final Deque<NumberToken> operands,

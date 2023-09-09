@@ -62,7 +62,7 @@ class Token {
         DIVIDE(2) {
             @Override
             public BigDecimal calculate(BigDecimal a, BigDecimal b) {
-                return a.divide(b, RoundingMode.HALF_EVEN);
+                return a.divide(b, 16, RoundingMode.HALF_EVEN);
             }
         };
 

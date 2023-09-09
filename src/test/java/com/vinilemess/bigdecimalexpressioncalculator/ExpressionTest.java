@@ -43,7 +43,8 @@ class ExpressionTest {
                     arguments("-10 / -2", BigDecimal.valueOf(5)),
                     arguments("2 + 2 * 2 - 2", BigDecimal.valueOf(4)),
                     arguments("2 * 3 + 4 / 2", BigDecimal.valueOf(8)),
-                    arguments("2 * 3 + 4 / 2 - 1", BigDecimal.valueOf(7))
+                    arguments("2 * 3 + 4 / 2 - 1", BigDecimal.valueOf(7)),
+                    arguments("1065.99 + 2038.47 + 108.40 + 7.96 + 114.14", BigDecimal.valueOf(3334.96))
 //                    arguments("(2 + 2) * 2 - 2", BigDecimal.valueOf(6)),
 //                    arguments("2 + 2 * (2 - 2)", BigDecimal.valueOf(2)),
 //                    arguments("(2 + 2) * (2 - 2)", BigDecimal.ZERO),
