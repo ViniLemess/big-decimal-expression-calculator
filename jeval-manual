@@ -1,0 +1,29 @@
+.TH Jeval 1 "September 2023" "Version 1.0" "User Manual"
+
+.SH NAME
+jeval \- a simple expression calculator writen in java.
+
+.SH SYNOPSIS
+.B jeval
+"expression"
+
+.SH DESCRIPTION
+.B jeval
+is a command-line tool that evaluates simple mathematical expressions.
+
+.SH OPTIONS
+.IP "--help"
+Display the help message.
+
+.SH EXAMPLES
+.IP "jeval 2 + 3"
+Displays 5.
+.IP "jeval '10 / 2'"
+Displays 5.
+
+.SH AUTHOR
+This manual page was written by Vinicius Lemes Caetano [https://github.com/ViniLemess].
+
+.SH SEE ALSO
+man(1)
+

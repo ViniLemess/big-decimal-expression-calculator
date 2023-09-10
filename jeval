@@ -1,0 +1,3 @@
+#!/bin/bash
+
+java -jar ~/.jeval/jeval-big-decimal-expression-calculator-1.0.jar "$@"
