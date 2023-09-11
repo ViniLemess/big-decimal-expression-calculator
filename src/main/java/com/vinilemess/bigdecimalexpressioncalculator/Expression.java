@@ -21,6 +21,10 @@ class Expression {
         return computeResultFromTokens(tokens, new ArrayDeque<>(), new ArrayDeque<>());
     }
 
+    /**
+     A recursive method that computes the result of the expression using two deques:
+     one for numbers (operands) and another for operators (operators).
+     **/
     private BigDecimal computeResultFromTokens(final Deque<Token> remainingTokens,
                                                Deque<NumberToken> operands,
                                                Deque<OperatorToken> operators) {
@@ -46,24 +50,39 @@ class Expression {
         return value.stripTrailingZeros();
     }
 
+    /**
+     Evaluates the top of the stack based on precedence, ensuring that the
+     stack of operators and operands is correctly manipulated before moving on.
+     **/
     private CalculationResult calculateOperation(final Deque<NumberToken> operands,
                                                  final Deque<OperatorToken> operators,
-                                                 final OperatorToken token) {
+                                                 final OperatorToken operatorToken) {
         Deque<OperatorToken> newOperators = new ArrayDeque<>(operators);
         Deque<NumberToken> newOperands = new ArrayDeque<>(operands);
-        while (shouldProcessCurrentOperators(newOperators, token)) {
+        while (shouldProcessCurrentOperators(newOperators, operatorToken)) {
             final CalculationResult result = applyOperatorAndCalculateResult(newOperands, newOperators);
             newOperators = result.operators();
             newOperands = result.operands();
         }
-        newOperators.push(token);
+        newOperators.push(operatorToken);
         return new CalculationResult(newOperands, newOperators);
     }
 
-    private static boolean shouldProcessCurrentOperators(final Deque<OperatorToken> operatorStack, final OperatorToken token) {
-        return !operatorStack.isEmpty() && operatorStack.peek().getOperator().getPrecedence() >= token.getOperator().getPrecedence();
+    /**
+     Determines if the current operator should be processed based on its precedence.
+     **/
+    private static boolean shouldProcessCurrentOperators(final Deque<OperatorToken> operatorStack, final OperatorToken operatorToken) {
+        if (!operatorStack.isEmpty()) {
+            final Operator stackFirstOperator = operatorStack.peekFirst().getOperator();
+            final Operator currentOperator = operatorToken.getOperator();
+            return stackFirstOperator.getPrecedence() >= currentOperator.getPrecedence();
+        }
+        return false;
     }
 
+   /**
+    Evaluates the final result once all tokens have been processed.
+    **/
     private BigDecimal evaluateFinalResult(final Deque<NumberToken> operands, final Deque<OperatorToken> operators) {
         if (operators.isEmpty()) {
             return operands.pop().getValue();
@@ -72,7 +91,9 @@ class Expression {
         return evaluateFinalResult(result.operands(), result.operators());
     }
 
-
+    /**
+     Applies the operator at the top of the stack to the two operands at the top of the stack.
+     **/
     private CalculationResult applyOperatorAndCalculateResult(final Deque<NumberToken> operands, final Deque<OperatorToken> operators) {
         final OperatorToken operatorToken = operators.pop();
         final NumberToken rightOperand = operands.pop();
